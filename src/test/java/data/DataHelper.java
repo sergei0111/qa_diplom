@@ -34,8 +34,11 @@ public class DataHelper {
         }
         return null;
     }
-    public static String generateValidCardNumberWith13Digits() {
-        return faker.numerify("4444 4444 4444 4");
+    public static String generateValidCardNumberWith15Digits() {
+        return faker.numerify("4444 4444 4444 444");
+    }
+    public static String generateValidCardNumberWith17Digits() {
+        return faker.numerify("4444 4444 4444 4444 4");
     }
     public static String generateValidCardNumberWith0Digits() {
         return faker.numerify("0000 0000 0000 0000");

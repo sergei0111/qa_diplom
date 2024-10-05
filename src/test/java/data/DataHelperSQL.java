@@ -33,6 +33,7 @@ public class DataHelperSQL {
         runner.update(conn, sqlUpdateTwo);
         runner.update(conn, sqlUpdateThree);
     }
+
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
@@ -43,6 +44,7 @@ public class DataHelperSQL {
         private String status;
         private String transaction_id;
     }
+
     @SneakyThrows
     public static List<PaymentEntity> getPayments() {
         setup();
@@ -50,6 +52,7 @@ public class DataHelperSQL {
         ResultSetHandler<List<PaymentEntity>> resultHandler = new BeanListHandler<>(PaymentEntity.class);
         return runner.query(conn, sqlQuery, resultHandler);
     }
+
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
@@ -60,6 +63,7 @@ public class DataHelperSQL {
         private String status;
         private String transaction_id;
     }
+
     @SneakyThrows
     public static List<CreditRequestEntity> getCreditsRequest() {
         setup();
@@ -67,6 +71,7 @@ public class DataHelperSQL {
         ResultSetHandler<List<CreditRequestEntity>> resultHandler = new BeanListHandler<>(CreditRequestEntity.class);
         return runner.query(conn, sqlQuery, resultHandler);
     }
+
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
@@ -76,6 +81,7 @@ public class DataHelperSQL {
         private String credit_id;
         private String payment_id;
     }
+
     @SneakyThrows
     public static List<OrderEntity> getOrders() {
         setup();

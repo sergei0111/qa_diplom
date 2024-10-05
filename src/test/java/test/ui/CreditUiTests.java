@@ -154,6 +154,20 @@ public class CreditUiTests {
         tripForm.assertField("number","Неверный формат");
     }
 
+    @Story("13 цифр в поле номера карты")
+    @Severity(SeverityLevel.CRITICAL)
+    @Test
+    public void shouldUnsuccessfulWith13DigitsInNumber() {
+        cardData = DataHelper.getValidApprovedCard();
+        var number = DataHelper.generateValidCardNumberWith13Digits();
+        var matchesNumber = number;
+
+        tripForm = tripCard.clickPayButton();
+        tripForm.insertingValueInForm(number, cardData.getMonth(), cardData.getYear(), cardData.getHolder(), cardData.getCvc());
+        tripForm.matchesByInsertValue(matchesNumber, cardData.getMonth(), cardData.getYear(), cardData.getHolder(), cardData.getCvc());
+        tripForm.assertField("number","Неверный формат");
+    }
+
 
     @Story("Пустое поле номер карты")
     @Severity(SeverityLevel.NORMAL)

@@ -5,6 +5,7 @@ import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.filter.log.LogDetail;
 import io.restassured.http.ContentType;
 import io.restassured.specification.RequestSpecification;
+
 import static io.restassured.RestAssured.given;
 
 public class APIHelper{
@@ -15,9 +16,11 @@ public class APIHelper{
             .setContentType(ContentType.JSON)
             .log(LogDetail.ALL)
             .build();
+
     public static void executeRequest(Object requestBody, String endpoint) {
         Gson gson = new Gson();
         var body = gson.toJson(requestBody);
+
         given()
                 .spec(spec)
                 .body(body)
@@ -29,6 +32,7 @@ public class APIHelper{
     public static void executeRequest500(Object requestBody, String endpoint) {
         Gson gson = new Gson();
         var body = gson.toJson(requestBody);
+
         given()
                 .spec(spec)
                 .body(body)
@@ -37,4 +41,5 @@ public class APIHelper{
                 .then()
                 .statusCode(500);
     }
+
 }

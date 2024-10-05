@@ -17,6 +17,7 @@
 Ввести в терминале команду java -jar ./artifacts/aqa-shop.jar
 Нажать ctrl дважды - открыть окно Run anything. Ввести команду gradlew clean test
 * СУБД PostgreSQL:
-Ввести в терминале команду  java "-Dspring.datasource.url=jdbc:postgresql://localhost:5432/app" -jar artifacts/aqa-shop.jar
+Ввести в терминале команду  java "-Dspring.datasource.url=jdbc:postgresql://localhost:5432/app" -jar artifacts/aqa-shop.jar 
+
 Нажать ctrl дважды - открыть окно Run anything. Ввести команду gradlew clean test "-Ddb.url=jdbc:postgresql://localhost:5432/app"
 6. Для генерации Allure отчета нажать: .\gradlew allureServe

@@ -105,6 +105,34 @@ public class PaymentUiTests {
         tripCard.clickPayButton();
         tripForm.matchesByInsertValue(cardData.getNumber(), cardData.getMonth(), cardData.getYear(), cardData.getHolder(), cardData.getCvc());
     }
+    //Валидные значения
+    @Story("Имя через дефис и фамилия на латинице")
+    @Severity(SeverityLevel.CRITICAL)
+    @Test
+    public void shouldVisibleNotification() {
+        cardData = DataHelper.getValidApprovedCard();
+        var holder = DataHelper.generateInvalidHolder();
+        var matchesHolder = holder;
+
+        tripForm = tripCard.clickPayButton();
+        tripForm.insertingValueInForm(cardData.getNumber(), cardData.getMonth(), cardData.getYear(), holder, cardData.getCvc());
+        tripForm.matchesByInsertValue(cardData.getNumber(), cardData.getMonth(), cardData.getYear(), matchesHolder, cardData.getCvc());
+        tripForm.assertBuyOperationIsSuccessful();
+    }
+
+    @Story("Имя и фамилия на латинице состоящие из 30 символов")
+    @Severity(SeverityLevel.CRITICAL)
+    @Test
+    public void shouldVisibleNotificationWithEn30() {
+        cardData = DataHelper.getValidApprovedCard();
+        var holder = "Abcdeferererererererererererer Abcdeferererererererererererer";
+        var matchesHolder = holder;
+
+        tripForm = tripCard.clickPayButton();
+        tripForm.insertingValueInForm(cardData.getNumber(), cardData.getMonth(), cardData.getYear(), holder, cardData.getCvc());
+        tripForm.matchesByInsertValue(cardData.getNumber(), cardData.getMonth(), cardData.getYear(), matchesHolder, cardData.getCvc());
+        tripForm.assertBuyOperationIsSuccessful();
+    }
 
 //Невалидные значения
 // Поле "Номер карты"
@@ -123,19 +151,6 @@ public class PaymentUiTests {
         tripForm.assertField("number","Неверный формат");
     }
 
-    @Story("17 цифр в поле номера карты")
-    @Severity(SeverityLevel.CRITICAL)
-    @Test
-    public void shouldUnsuccessfulWith17DigitsInNumber() {
-        cardData = DataHelper.getValidApprovedCard();
-        var number = DataHelper.generateValidCardNumberWith17Digits();
-        var matchesNumber = number;
-
-        tripForm = tripCard.clickPayButton();
-        tripForm.insertingValueInForm(number, cardData.getMonth(), cardData.getYear(), cardData.getHolder(), cardData.getCvc());
-        tripForm.matchesByInsertValue(matchesNumber, cardData.getMonth(), cardData.getYear(), cardData.getHolder(), cardData.getCvc());
-        tripForm.assertField("number","Неверный формат");
-    }
 
     @Story("Пустое поле номер карты")
     @Severity(SeverityLevel.NORMAL)

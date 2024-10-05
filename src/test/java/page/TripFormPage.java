@@ -2,13 +2,17 @@ package page;
 
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.SelenideElement;
+
 import java.time.Duration;
+
 import static com.codeborne.selenide.Condition.value;
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.$x;
 
+
 public class TripFormPage {
     private static final SelenideElement dailyTripCard = $x("//div[@id='root']/div/div[contains(@class, 'card')]");
+
     private static final SelenideElement payButton = $x("//span[text()='Купить']//ancestor::button");
     private static final SelenideElement creditButton = $x("//span[text()='Купить в кредит']//ancestor::button");
     private static final SelenideElement form = $x("//form");
@@ -23,6 +27,7 @@ public class TripFormPage {
     private static final SelenideElement cvcLabel = form.$x(".//span[text()='CVC/CVV']//ancestor::div/span/span[2]/span");
     private static final SelenideElement cvcInput = cvcLabel.$x(".//input");
     private static final SelenideElement continuousButton = form.$x(".//span[text()='Продолжить']//ancestor::button");
+
     private static final SelenideElement successNotification = $x("//div[contains(@class, 'notification_status_ok')]");
     private static final SelenideElement successCloseButton = successNotification.$x("./button");
     private static final SelenideElement errorNotification = $x("//div[contains(@class, 'notification_status_error')]");
@@ -32,6 +37,7 @@ public class TripFormPage {
         dailyTripCard.should(Condition.visible);
         payButton.should(Condition.visible);
         creditButton.should(Condition.visible);
+
         form.should(Condition.visible);
         successNotification.should(Condition.hidden);
         errorNotification.should(Condition.hidden);
@@ -76,7 +82,6 @@ public class TripFormPage {
         errorCloseButton.click();
         errorNotification.should(Condition.hidden);
     }
-
     private SelenideElement getLabelElement(String field) {
         switch (field) {
             case "number":
@@ -110,4 +115,5 @@ public class TripFormPage {
             label.shouldHave(Condition.cssClass("input_has-value"))
                     .shouldNotHave(Condition.cssClass("input_has-value"));
     }
+
 }

@@ -24,7 +24,7 @@ public class DataHelperSQL {
     }
 
     @SneakyThrows
-    public static void setDown() {
+    public static void clearDatabaseRecords() {
         setup();
         var sqlUpdateOne = "DELETE FROM credit_request_entity;";
         var sqlUpdateTwo = "DELETE FROM payment_entity;";

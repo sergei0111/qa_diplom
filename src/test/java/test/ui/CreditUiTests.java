@@ -25,8 +25,8 @@ public class CreditUiTests {
     private static List<DataHelperSQL.OrderEntity> orders;
 
     @BeforeClass
-    public void setupClass() {
-        DataHelperSQL.setDown();
+    public void initializeTest() {
+        DataHelperSQL.clearDatabaseRecords();
         SelenideLogger.addListener("allure", new AllureSelenide()
                 .screenshots(true).savePageSource(true));
     }
@@ -38,20 +38,20 @@ public class CreditUiTests {
     }
 
     @AfterMethod
-    public void setDownMethod() {
-        DataHelperSQL.setDown();
+    public void tearDownMethod() {
+        DataHelperSQL.clearDatabaseRecords();
     }
 
     @AfterClass
-    public void setDownClass() {
-        SelenideLogger.removeListener("allure");
+    public void tearDownClass() {
+        SelenideLogger.getReadableSubject("allure");
     }
 
     @Story("HappyPath")
     @Severity(SeverityLevel.BLOCKER)
     @Test
-    public void shouldHappyPath() {
-        cardData = DataHelper.getValidApprovedCard();
+    public void shouldCompletePurchaseSuccessfully() {
+        cardData = DataHelper.generateApprovedCardData();
 
         tripForm = tripCard.clickPayButton();
         tripForm.insertingValueInForm(cardData.getNumber(), cardData.getMonth(), cardData.getYear(), cardData.getHolder(), cardData.getCvc());
@@ -74,8 +74,8 @@ public class CreditUiTests {
     @Story("SadPath")
     @Severity(SeverityLevel.BLOCKER)
     @Test
-    public void shouldSadPath() {
-        cardData = DataHelper.getValidDeclinedCard();
+    public void shouldDeclinePurchase() {
+        cardData = DataHelper.generateDeclinedCardData();
 
         tripForm = tripCard.clickPayButton();
         tripForm.insertingValueInForm(cardData.getNumber(), cardData.getMonth(), cardData.getYear(), cardData.getHolder(), cardData.getCvc());
@@ -98,8 +98,8 @@ public class CreditUiTests {
     @Story("Переключение с формы оплаты на форму кредита")
     @Severity(SeverityLevel.MINOR)
     @Test
-    public void shouldImmutableInputValuesAfterClickButton() {
-        cardData = DataHelper.getValidApprovedCard();
+    public void shouldRetainInputValuesAfterButtonClick() {
+        cardData = DataHelper.generateApprovedCardData();
 
         tripForm = tripCard.clickPayButton();
         tripForm.insertingValueInForm(cardData.getNumber(), cardData.getMonth(), cardData.getYear(), cardData.getHolder(), cardData.getCvc());
@@ -112,7 +112,7 @@ public class CreditUiTests {
     @Severity(SeverityLevel.CRITICAL)
     @Test
     public void shouldVisibleNotification() {
-        cardData = DataHelper.getValidApprovedCard();
+        cardData = DataHelper.generateApprovedCardData();
         var holder = DataHelper.generateInvalidHolder();
         var matchesHolder = holder;
 
@@ -125,8 +125,8 @@ public class CreditUiTests {
     @Story("Имя и фамилия на латинице состоящие из 30 символов")
     @Severity(SeverityLevel.CRITICAL)
     @Test
-    public void shouldVisibleNotificationWithEn30() {
-        cardData = DataHelper.getValidApprovedCard();
+    public void shouldShowNotificationFor30CharName() {
+        cardData = DataHelper.generateApprovedCardData();
         var holder = "Abcdeferererererererererererer Abcdeferererererererererererer";
         var matchesHolder = holder;
 
@@ -143,8 +143,8 @@ public class CreditUiTests {
     @Story("15 цифр в поле номера карты")
     @Severity(SeverityLevel.CRITICAL)
     @Test
-    public void shouldUnsuccessfulWith15DigitsInNumber() {
-        cardData = DataHelper.getValidApprovedCard();
+    public void shouldFailWith15DigitsInCardNumber() {
+        cardData = DataHelper.generateApprovedCardData();
         var number = DataHelper.generateValidCardNumberWith15Digits();
         var matchesNumber = number;
 
@@ -157,8 +157,8 @@ public class CreditUiTests {
     @Story("13 цифр в поле номера карты")
     @Severity(SeverityLevel.CRITICAL)
     @Test
-    public void shouldUnsuccessfulWith13DigitsInNumber() {
-        cardData = DataHelper.getValidApprovedCard();
+    public void shouldFailWith13DigitsInCardNumber() {
+        cardData = DataHelper.generateApprovedCardData();
         var number = DataHelper.generateValidCardNumberWith13Digits();
         var matchesNumber = number;
 
@@ -172,8 +172,8 @@ public class CreditUiTests {
     @Story("Пустое поле номер карты")
     @Severity(SeverityLevel.NORMAL)
     @Test
-    public void shouldVisibleNotificationWithEmptyNumber() {
-        cardData = DataHelper.getValidApprovedCard();
+    public void shouldShowNotificationForEmptyCardNumber() {
+        cardData = DataHelper.generateApprovedCardData();
         tripForm = tripCard.clickPayButton();
         tripForm.insertingValueInForm("", cardData.getMonth(), cardData.getYear(), cardData.getHolder(), cardData.getCvc());
         tripForm.matchesByInsertValue("", cardData.getMonth(), cardData.getYear(), cardData.getHolder(), cardData.getCvc());
@@ -183,8 +183,8 @@ public class CreditUiTests {
     @Story("Нули в поле номера карты")
     @Severity(SeverityLevel.MINOR)
     @Test
-    public void shouldVisibleNotificationWithInvalidEmpty() {
-        cardData = DataHelper.getValidApprovedCard();
+    public void shouldShowNotificationForInvalidZeroNumber() {
+        cardData = DataHelper.generateApprovedCardData();
         var number = DataHelper.generateValidCardNumberWith0Digits();
         var matchesNumber = number;
 
@@ -197,8 +197,8 @@ public class CreditUiTests {
     @Story("Заполнение поля номера карты c пробелами вначале и в конце")
     @Severity(SeverityLevel.MINOR)
     @Test
-    public void shouldSuccessfulWithStartEndSpacebarInNumber() {
-        cardData = DataHelper.getValidApprovedCard();
+    public void shouldSucceedWithLeadingAndTrailingSpacesInCardNumber() {
+        cardData = DataHelper.generateApprovedCardData();
         var number = " " + cardData.getNumber() + " ";
         var matchesNumber = cardData.getNumber();
 
@@ -214,7 +214,7 @@ public class CreditUiTests {
     @Severity(SeverityLevel.CRITICAL)
     @Test
     public void shouldVisibleNotificationWithCyrillicSymbolInHolder() {
-        cardData = DataHelper.getValidApprovedCard();
+        cardData = DataHelper.generateApprovedCardData();
         var holder = DataHelper.generateInvalidHolderWithCyrillicSymbols45();
         var matchesHolder = "";
 
@@ -228,7 +228,7 @@ public class CreditUiTests {
     @Severity(SeverityLevel.CRITICAL)
     @Test
     public void shouldVisibleNotificationWithCyrillicInHolder() {
-        cardData = DataHelper.getValidApprovedCard();
+        cardData = DataHelper.generateApprovedCardData();
         var holder = DataHelper.generateInvalidHolderWithCyrillicSymbols();
         var matchesHolder = "";
 
@@ -242,7 +242,7 @@ public class CreditUiTests {
     @Severity(SeverityLevel.NORMAL)
     @Test
     public void shouldVisibleNotificationWithEmptyHolder() {
-        cardData = DataHelper.getValidApprovedCard();
+        cardData = DataHelper.generateApprovedCardData();
         var holder = "";
         var matchesHolder = holder;
 
@@ -256,7 +256,7 @@ public class CreditUiTests {
     @Severity(SeverityLevel.NORMAL)
     @Test
     public void shouldAutoDeletingStartEndHyphenInHolder() {
-        cardData = DataHelper.getValidApprovedCard();
+        cardData = DataHelper.generateApprovedCardData();
         var holder = " " + cardData.getHolder() + " ";
         var matchesHolder = cardData.getHolder();
 
@@ -270,7 +270,7 @@ public class CreditUiTests {
     @Severity(SeverityLevel.CRITICAL)
     @Test
     public void shouldVisibleNotificationWithFirstName() {
-        cardData = DataHelper.getValidApprovedCard();
+        cardData = DataHelper.generateApprovedCardData();
         var holder = DataHelper.generateInvalidHolderFirstNameEn();
         var matchesHolder = "";
 
@@ -284,7 +284,7 @@ public class CreditUiTests {
     @Severity(SeverityLevel.CRITICAL)
     @Test
     public void shouldVisibleNotificationWithFirstRuLastEn() {
-        cardData = DataHelper.getValidApprovedCard();
+        cardData = DataHelper.generateApprovedCardData();
         var holder = DataHelper.generateInvalidHolderFirstNameRuLastEn();
         var matchesHolder = "";
 
@@ -298,7 +298,7 @@ public class CreditUiTests {
     @Severity(SeverityLevel.CRITICAL)
     @Test
     public void shouldVisibleNotificationWithFirstEnLastRu() {
-        cardData = DataHelper.getValidApprovedCard();
+        cardData = DataHelper.generateApprovedCardData();
         var holder = DataHelper.generateInvalidHolderFirstNameEnLastRu();
         var matchesHolder = "";
 
@@ -313,7 +313,7 @@ public class CreditUiTests {
     @Severity(SeverityLevel.NORMAL)
     @Test
     public void shouldVisibleNotificationWithEmptyMonth() {
-        cardData = DataHelper.getValidApprovedCard();
+        cardData = DataHelper.generateApprovedCardData();
         var month = "";
         var matchesMonth = "";
 
@@ -327,7 +327,7 @@ public class CreditUiTests {
     @Severity(SeverityLevel.MINOR)
     @Test
     public void shouldVisibleNotificationWith00InMonth() {
-        cardData = DataHelper.getValidApprovedCard();
+        cardData = DataHelper.generateApprovedCardData();
         var month = "00";
         var matchesMonth = month;
 
@@ -341,7 +341,7 @@ public class CreditUiTests {
     @Severity(SeverityLevel.MINOR)
     @Test
     public void shouldVisibleNotificationWith13InMonth() {
-        cardData = DataHelper.getValidApprovedCard();
+        cardData = DataHelper.generateApprovedCardData();
         var month = "13";
         var matchesMonth = month;
 
@@ -356,7 +356,7 @@ public class CreditUiTests {
     @Severity(SeverityLevel.NORMAL)
     @Test
     public void shouldVisibleNotificationWithEmptyYear() {
-        cardData = DataHelper.getValidApprovedCard();
+        cardData = DataHelper.generateApprovedCardData();
         var year = "";
         var matchesYear = year;
 
@@ -370,7 +370,7 @@ public class CreditUiTests {
     @Severity(SeverityLevel.MINOR)
     @Test
     public void shouldVisibleNotificationWithInvalid0SymbolsInYear() {
-        cardData = DataHelper.getValidApprovedCard();
+        cardData = DataHelper.generateApprovedCardData();
         var year = "00";
         var matchesYear = year;
 
@@ -385,7 +385,7 @@ public class CreditUiTests {
     @Severity(SeverityLevel.NORMAL)
     @Test
     public void shouldVisibleNotificationWithEmptyCVC() {
-        cardData = DataHelper.getValidApprovedCard();
+        cardData = DataHelper.generateApprovedCardData();
         var cvc = "";
         var matchesCvc = cvc;
 
@@ -399,7 +399,7 @@ public class CreditUiTests {
     @Severity(SeverityLevel.MINOR)
     @Test
     public void shouldVisibleNotificationWith2DigitsInCVC() {
-        cardData = DataHelper.getValidApprovedCard();
+        cardData = DataHelper.generateApprovedCardData();
         var cvc = DataHelper.generateInvalidCVCWith2Digit();
         var matchesCvc = cvc;
 
@@ -413,7 +413,7 @@ public class CreditUiTests {
     @Severity(SeverityLevel.MINOR)
     @Test
     public void shouldSuccessfulWith4DigitsInCVC() {
-        cardData = DataHelper.getValidApprovedCard();
+        cardData = DataHelper.generateApprovedCardData();
         var cvc = cardData.getCvc() + DataHelper.generateRandomOneDigit();
         var matchesCvc = cardData.getCvc();
 
@@ -427,7 +427,7 @@ public class CreditUiTests {
     @Severity(SeverityLevel.MINOR)
     @Test
     public void shouldVisibleNotificationWithEmptyCVC0() {
-        cardData = DataHelper.getValidApprovedCard();
+        cardData = DataHelper.generateApprovedCardData();
         var cvc = "000";
         var matchesCvc = cvc;
 

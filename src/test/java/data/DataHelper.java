@@ -22,17 +22,17 @@ public class DataHelper {
     }
 
 
-    public static CardData getValidApprovedCard() {
-        return new CardData(getNumberByStatus("approved"), generateMonth(1), generateYear(2),
+    public static CardData generateApprovedCardData() {
+        return new CardData(generateCardNumberByStatus("approved"), generateMonth(1), generateYear(2),
                 generateValidHolder(), generateValidCVC());
     }
 
-    public static CardData getValidDeclinedCard() {
-        return new CardData(getNumberByStatus("declined"), generateMonth(1), generateYear(2),
+    public static CardData generateDeclinedCardData() {
+        return new CardData(generateCardNumberByStatus("declined"), generateMonth(1), generateYear(2),
                 generateValidHolder(), generateValidCVC());
     }
 
-    public static String getNumberByStatus(String status) {
+    public static String generateCardNumberByStatus(String status) {
         if (status.equalsIgnoreCase("APPROVED")) {
             return "4444 4444 4444 4441";
         } else if (status.equalsIgnoreCase("DECLINED")) {

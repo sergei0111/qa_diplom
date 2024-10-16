@@ -35,27 +35,27 @@ public class PaymentApiTests {
     private static List<DataHelperSQL.OrderEntity> orders;
 
     @BeforeClass
-    public void setupClass() {
-        DataHelperSQL.setDown();
+    public void initializeTest() {
+        DataHelperSQL.clearDatabaseRecords();
         SelenideLogger.addListener("allure", new AllureSelenide()
                 .screenshots(true).savePageSource(true));
     }
 
     @AfterMethod
-    public void setDownMethod() {
-        DataHelperSQL.setDown();
+    public void tearDownMethod() {
+        DataHelperSQL.clearDatabaseRecords();
     }
 
     @AfterClass
-    public void setDownClass() {
-        SelenideLogger.removeListener("allure");
+    public void tearDownClass() {
+        SelenideLogger.getReadableSubject("allure");
     }
 
     @Story("Пустое body запроса")
     @Severity(SeverityLevel.NORMAL)
     @Test
-    public void shouldStatus400WithEmptyBody() {
-        cardData = DataHelper.getValidApprovedCard();
+    public void testEmptyRequestBodyCauses400() {
+        cardData = DataHelper.generateApprovedCardData();
         APIHelper.executeRequest(cardData, paymentUrl);
         payments = DataHelperSQL.getPayments();
         credits = DataHelperSQL.getCreditsRequest();
@@ -68,7 +68,7 @@ public class PaymentApiTests {
     @Story("Пустое значение у атрибута number в body запроса")
     @Severity(SeverityLevel.NORMAL)
     @Test
-    public void shouldStatus400WithEmptyNumber() {
+    public void testEmptyNumberCauses400() {
         cardData = new DataHelper.CardData(null, DataHelper.generateMonth(1), DataHelper.generateYear(2),
                 DataHelper.generateValidHolder(), DataHelper.generateValidCVC());
         APIHelper.executeRequest500(cardData, paymentUrl);
@@ -83,8 +83,8 @@ public class PaymentApiTests {
     @Story("Пустое значение у атрибута month в body запроса")
     @Severity(SeverityLevel.NORMAL)
     @Test
-    public void shouldStatus400WithEmptyMonth() {
-        cardData = new DataHelper.CardData(DataHelper.getNumberByStatus("approved"), null, DataHelper.generateYear(2),
+    public void testEmptyMonthCauses400() {
+        cardData = new DataHelper.CardData(DataHelper.generateCardNumberByStatus("approved"), null, DataHelper.generateYear(2),
                 DataHelper.generateValidHolder(), DataHelper.generateValidCVC());
         APIHelper.executeRequest(cardData, paymentUrl);
         payments = DataHelperSQL.getPayments();
@@ -98,8 +98,8 @@ public class PaymentApiTests {
     @Story("Пустое значение у атрибута year в body запроса")
     @Severity(SeverityLevel.NORMAL)
     @Test
-    public void shouldStatus400WithEmptyYear() {
-        cardData = new DataHelper.CardData(DataHelper.getNumberByStatus("approved"), DataHelper.generateMonth(1), null,
+    public void testEmptyYearCauses400() {
+        cardData = new DataHelper.CardData(DataHelper.generateCardNumberByStatus("approved"), DataHelper.generateMonth(1), null,
                 DataHelper.generateValidHolder(), DataHelper.generateValidCVC());
         APIHelper.executeRequest(cardData, paymentUrl);
         payments = DataHelperSQL.getPayments();
@@ -113,8 +113,8 @@ public class PaymentApiTests {
     @Story("Пустое значение у атрибута holder в body запроса")
     @Severity(SeverityLevel.NORMAL)
     @Test
-    public void shouldStatus400WithEmptyHolder() {
-        cardData = new DataHelper.CardData(DataHelper.getNumberByStatus("approved"), DataHelper.generateMonth(1),
+    public void testEmptyHolderCauses400() {
+        cardData = new DataHelper.CardData(DataHelper.generateCardNumberByStatus("approved"), DataHelper.generateMonth(1),
                 DataHelper.generateYear(2), null, DataHelper.generateValidCVC());
         APIHelper.executeRequest(cardData, paymentUrl);
         payments = DataHelperSQL.getPayments();
@@ -128,8 +128,8 @@ public class PaymentApiTests {
     @Story("Пустое значение у атрибута cvc в body запроса")
     @Severity(SeverityLevel.NORMAL)
     @Test
-    public void shouldStatus400WithEmptyCvc() {
-        cardData = new DataHelper.CardData(DataHelper.getNumberByStatus("approved"), DataHelper.generateMonth(1),
+    public void testEmptyCvcCauses400() {
+        cardData = new DataHelper.CardData(DataHelper.generateCardNumberByStatus("approved"), DataHelper.generateMonth(1),
                 DataHelper.generateYear(2), DataHelper.generateValidHolder(), null);
         APIHelper.executeRequest(cardData, paymentUrl);
         payments = DataHelperSQL.getPayments();

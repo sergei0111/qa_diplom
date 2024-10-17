@@ -40,76 +40,6 @@ public class PaymentApiTests {
         SelenideLogger.addListener("allure", new AllureSelenide()
                 .screenshots(true).savePageSource(true));
     }
-
-    @AfterMethod
-    public void tearDownMethod() {
-        DataHelperSQL.clearDatabaseRecords();
-    }
-
-    @AfterClass
-    public void tearDownClass() {
-        SelenideLogger.getReadableSubject("allure");
-    }
-
-    @Story("Пустое body запроса")
-    @Severity(SeverityLevel.NORMAL)
-    @Test
-    public void testEmptyRequestBodyCauses400() {
-        cardData = DataHelper.generateApprovedCardData();
-        APIHelper.executeRequest(cardData, paymentUrl);
-        payments = DataHelperSQL.getPayments();
-        credits = DataHelperSQL.getCreditsRequest();
-        orders = DataHelperSQL.getOrders();
-        assertEquals(1, payments.size());
-        assertEquals(0, credits.size());
-        assertEquals(1, orders.size());
-    }
-
-    @Story("Пустое значение у атрибута number в body запроса")
-    @Severity(SeverityLevel.NORMAL)
-    @Test
-    public void testEmptyNumberCauses400() {
-        cardData = new DataHelper.CardData(null, DataHelper.generateMonth(1), DataHelper.generateYear(2),
-                DataHelper.generateValidHolder(), DataHelper.generateValidCVC());
-        APIHelper.executeRequest500(cardData, paymentUrl);
-        payments = DataHelperSQL.getPayments();
-        credits = DataHelperSQL.getCreditsRequest();
-        orders = DataHelperSQL.getOrders();
-        assertEquals(0, payments.size());
-        assertEquals(0, credits.size());
-        assertEquals(0, orders.size());
-    }
-
-    @Story("Пустое значение у атрибута month в body запроса")
-    @Severity(SeverityLevel.NORMAL)
-    @Test
-    public void testEmptyMonthCauses400() {
-        cardData = new DataHelper.CardData(DataHelper.generateCardNumberByStatus("approved"), null, DataHelper.generateYear(2),
-                DataHelper.generateValidHolder(), DataHelper.generateValidCVC());
-        APIHelper.executeRequest(cardData, paymentUrl);
-        payments = DataHelperSQL.getPayments();
-        credits = DataHelperSQL.getCreditsRequest();
-        orders = DataHelperSQL.getOrders();
-        assertEquals(1, payments.size());
-        assertEquals(0, credits.size());
-        assertEquals(1, orders.size());
-    }
-
-    @Story("Пустое значение у атрибута year в body запроса")
-    @Severity(SeverityLevel.NORMAL)
-    @Test
-    public void testEmptyYearCauses400() {
-        cardData = new DataHelper.CardData(DataHelper.generateCardNumberByStatus("approved"), DataHelper.generateMonth(1), null,
-                DataHelper.generateValidHolder(), DataHelper.generateValidCVC());
-        APIHelper.executeRequest(cardData, paymentUrl);
-        payments = DataHelperSQL.getPayments();
-        credits = DataHelperSQL.getCreditsRequest();
-        orders = DataHelperSQL.getOrders();
-        assertEquals(1, payments.size());
-        assertEquals(0, credits.size());
-        assertEquals(1, orders.size());
-    }
-
     @Story("Пустое значение у атрибута holder в body запроса")
     @Severity(SeverityLevel.NORMAL)
     @Test
@@ -124,7 +54,6 @@ public class PaymentApiTests {
         assertEquals(0, credits.size());
         assertEquals(1, orders.size());
     }
-
     @Story("Пустое значение у атрибута cvc в body запроса")
     @Severity(SeverityLevel.NORMAL)
     @Test
@@ -138,5 +67,68 @@ public class PaymentApiTests {
         assertEquals(1, payments.size());
         assertEquals(0, credits.size());
         assertEquals(1, orders.size());
+    }
+    @Story("Пустое значение у атрибута number в body запроса")
+    @Severity(SeverityLevel.NORMAL)
+    @Test
+    public void testEmptyNumberCauses400() {
+        cardData = new DataHelper.CardData(null, DataHelper.generateMonth(1), DataHelper.generateYear(2),
+                DataHelper.generateValidHolder(), DataHelper.generateValidCVC());
+        APIHelper.executeRequest500(cardData, paymentUrl);
+        payments = DataHelperSQL.getPayments();
+        credits = DataHelperSQL.getCreditsRequest();
+        orders = DataHelperSQL.getOrders();
+        assertEquals(0, payments.size());
+        assertEquals(0, credits.size());
+        assertEquals(0, orders.size());
+    }
+    @Story("Пустое значение у атрибута month в body запроса")
+    @Severity(SeverityLevel.NORMAL)
+    @Test
+    public void testEmptyMonthCauses400() {
+        cardData = new DataHelper.CardData(DataHelper.generateCardNumberByStatus("approved"), null, DataHelper.generateYear(2),
+                DataHelper.generateValidHolder(), DataHelper.generateValidCVC());
+        APIHelper.executeRequest(cardData, paymentUrl);
+        payments = DataHelperSQL.getPayments();
+        credits = DataHelperSQL.getCreditsRequest();
+        orders = DataHelperSQL.getOrders();
+        assertEquals(1, payments.size());
+        assertEquals(0, credits.size());
+        assertEquals(1, orders.size());
+    }
+    @Story("Пустое значение у атрибута year в body запроса")
+    @Severity(SeverityLevel.NORMAL)
+    @Test
+    public void testEmptyYearCauses400() {
+        cardData = new DataHelper.CardData(DataHelper.generateCardNumberByStatus("approved"), DataHelper.generateMonth(1), null,
+                DataHelper.generateValidHolder(), DataHelper.generateValidCVC());
+        APIHelper.executeRequest(cardData, paymentUrl);
+        payments = DataHelperSQL.getPayments();
+        credits = DataHelperSQL.getCreditsRequest();
+        orders = DataHelperSQL.getOrders();
+        assertEquals(1, payments.size());
+        assertEquals(0, credits.size());
+        assertEquals(1, orders.size());
+    }
+    @Story("Пустое body запроса")
+    @Severity(SeverityLevel.NORMAL)
+    @Test
+    public void testEmptyRequestBodyCauses400() {
+        cardData = DataHelper.generateApprovedCardData();
+        APIHelper.executeRequest(cardData, paymentUrl);
+        payments = DataHelperSQL.getPayments();
+        credits = DataHelperSQL.getCreditsRequest();
+        orders = DataHelperSQL.getOrders();
+        assertEquals(1, payments.size());
+        assertEquals(0, credits.size());
+        assertEquals(1, orders.size());
+    }
+    @AfterMethod
+    public void tearDownMethod() {
+        DataHelperSQL.clearDatabaseRecords();
+    }
+    @AfterClass
+    public void tearDownClass() {
+        SelenideLogger.getReadableSubject("allure");
     }
 }

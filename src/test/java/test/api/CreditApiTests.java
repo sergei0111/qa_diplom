@@ -37,22 +37,27 @@ public class CreditApiTests {
         SelenideLogger.addListener("allure", new AllureSelenide()
                 .screenshots(true).savePageSource(true));
     }
-
-    @AfterMethod
-    public void tearDownMethod() {
-        DataHelperSQL.clearDatabaseRecords();
-    }
-
-    @AfterClass
-    public void tearDownClass() {
-        SelenideLogger.getReadableSubject("allure");
-    }
-
-    @Story("Пустое body запроса")
+    @Story("Пустое значение у атрибута holder в body запроса")
     @Severity(SeverityLevel.NORMAL)
     @Test
-    public void testEmptyRequestBodyCauses400() {
-        cardData = DataHelper.generateApprovedCardData();
+    public void testEmptyHolderCauses400() {
+        cardData = new DataHelper.CardData(DataHelper.generateCardNumberByStatus("approved"), DataHelper.generateMonth(1),
+                DataHelper.generateYear(2), null, DataHelper.generateValidCVC());
+        APIHelper.executeRequest(cardData, creditUrl);
+        payments = DataHelperSQL.getPayments();
+        credits = DataHelperSQL.getCreditsRequest();
+        orders = DataHelperSQL.getOrders();
+        assertEquals(0, payments.size());
+        assertEquals(1, credits.size());
+        assertEquals(1, orders.size());
+    }
+
+    @Story("Пустое значение у атрибута cvc в body запроса")
+    @Severity(SeverityLevel.NORMAL)
+    @Test
+    public void testEmptyCvcCauses400() {
+        cardData = new DataHelper.CardData(DataHelper.generateCardNumberByStatus("approved"), DataHelper.generateMonth(1),
+                DataHelper.generateYear(2), DataHelper.generateValidHolder(), null);
         APIHelper.executeRequest(cardData, creditUrl);
         payments = DataHelperSQL.getPayments();
         credits = DataHelperSQL.getCreditsRequest();
@@ -106,13 +111,11 @@ public class CreditApiTests {
         assertEquals(1, credits.size());
         assertEquals(1, orders.size());
     }
-
-    @Story("Пустое значение у атрибута holder в body запроса")
+    @Story("Пустое body запроса")
     @Severity(SeverityLevel.NORMAL)
     @Test
-    public void testEmptyHolderCauses400() {
-        cardData = new DataHelper.CardData(DataHelper.generateCardNumberByStatus("approved"), DataHelper.generateMonth(1),
-                DataHelper.generateYear(2), null, DataHelper.generateValidCVC());
+    public void testEmptyRequestBodyCauses400() {
+        cardData = DataHelper.generateApprovedCardData();
         APIHelper.executeRequest(cardData, creditUrl);
         payments = DataHelperSQL.getPayments();
         credits = DataHelperSQL.getCreditsRequest();
@@ -122,18 +125,13 @@ public class CreditApiTests {
         assertEquals(1, orders.size());
     }
 
-    @Story("Пустое значение у атрибута cvc в body запроса")
-    @Severity(SeverityLevel.NORMAL)
-    @Test
-    public void testEmptyCvcCauses400() {
-        cardData = new DataHelper.CardData(DataHelper.generateCardNumberByStatus("approved"), DataHelper.generateMonth(1),
-                DataHelper.generateYear(2), DataHelper.generateValidHolder(), null);
-        APIHelper.executeRequest(cardData, creditUrl);
-        payments = DataHelperSQL.getPayments();
-        credits = DataHelperSQL.getCreditsRequest();
-        orders = DataHelperSQL.getOrders();
-        assertEquals(0, payments.size());
-        assertEquals(1, credits.size());
-        assertEquals(1, orders.size());
+    @AfterMethod
+    public void tearDownMethod() {
+        DataHelperSQL.clearDatabaseRecords();
+    }
+
+    @AfterClass
+    public void tearDownClass() {
+        SelenideLogger.getReadableSubject("allure");
     }
 }
